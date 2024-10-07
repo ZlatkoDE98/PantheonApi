@@ -1,4 +1,7 @@
-﻿namespace PantheonApi.Models;
+﻿using System;
+using System.Collections.Generic;
+
+namespace PantheonApi.Models;
 
 public partial class THeMove
 {

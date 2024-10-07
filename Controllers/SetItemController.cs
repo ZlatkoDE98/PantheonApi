@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using PantheonApi.Models;
-using System.Linq.Dynamic.Core;
+using PantheonApi.DTOs.Item;
+using PantheonApi.Repositories.Interfaces;
 
 namespace PantheonApi.Controllers
 {
@@ -9,73 +8,64 @@ namespace PantheonApi.Controllers
     [Route("api/items")]
     public class ItemsController : ControllerBase
     {
-        private readonly RsMfDemoContext _context;
+        private readonly IItemRepository _itemRepository;
 
-        public ItemsController(RsMfDemoContext context)
+        public ItemsController(IItemRepository itemRepository)
         {
-            _context = context;
+            _itemRepository = itemRepository;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<THeSetItem>>> GetItems()
+        public async Task<ActionResult<IEnumerable<ItemDto>>> GetItems()
         {
-            return await _context.THeSetItems.ToListAsync();
+            var items = await _itemRepository.GetAllItemsAsync();
+            return Ok(items);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ItemDto>> GetItemById(string id)
+        {
+            var item = await _itemRepository.GetItemByIdAsync(id);
+
+            if (item == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(item);
         }
 
         [HttpGet("filter")]
         public async Task<ActionResult<IEnumerable<dynamic>>> GetFilteredItems([FromQuery] string fields)
         {
-            if (string.IsNullOrWhiteSpace(fields))
+            try
             {
-                return BadRequest("No fields specified.");
+                var filteredItems = await _itemRepository.GetFilteredItemsAsync(fields);
+                return Ok(filteredItems);
             }
-
-            var selectedFields = fields.Split(',');
-            var validFields = typeof(THeSetItem).GetProperties()
-                                                .Select(p => p.Name)
-                                                .ToHashSet(StringComparer.OrdinalIgnoreCase);
-
-            foreach (var field in selectedFields)
+            catch (ArgumentException ex)
             {
-                if (!validFields.Contains(field.Trim()))
-                {
-                    return BadRequest($"Field '{field}' is not valid.");
-                }
+                return BadRequest(ex.Message);
             }
-
-            var query = _context.THeSetItems
-                .Select($"new({string.Join(",", selectedFields)})");
-
-            var result = await query.ToDynamicListAsync();
-            return Ok(result);
         }
-
-        [HttpGet("{id}")]
-        public async Task<ActionResult<THeSetItem>> GetItemById(string id)
+        [HttpGet("prices")]
+        public async Task<ActionResult<ItemPriceDto>> GetItemPrices(string id)
         {
-            var item = await _context.THeSetItems
-                .FirstOrDefaultAsync(i => i.AcIdent == id);
+            var item = await _itemRepository.GetItemPrices(id);
 
             if (item == null)
             {
                 return NotFound();
             }
 
-            return item;
+            return Ok(item);
         }
 
-        [HttpGet("name/{name}")]
-        public async Task<ActionResult<THeSetItem>> GetItemByName(string name)
+        [HttpGet("with-prices")]
+        public async Task<ActionResult<IEnumerable<dynamic>>> GetItemsWithPrices()
         {
-            var item = await _context.THeSetItems
-                .FirstOrDefaultAsync(i => i.AcName == name);
-
-            if (item == null)
-            {
-                return NotFound();
-            }
-
-            return item;
+            var itemsWithPrices = await _itemRepository.GetItemsWithPricesAsync();
+            return Ok(itemsWithPrices);
         }
     }
 }

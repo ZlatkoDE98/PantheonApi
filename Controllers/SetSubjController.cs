@@ -50,6 +50,19 @@ namespace PantheonApi.Controllers
             {
                 return BadRequest("No fields specified.");
             }
+            
+            var selectedFields = fields.Split(',');
+            var validFields = typeof(THeSetSubj).GetProperties()
+                                                .Select(p => p.Name)
+                                                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+            foreach (var field in selectedFields)
+            {
+                if (!validFields.Contains(field.Trim()))
+                {
+                    return BadRequest($"Field '{field}' is not valid.");
+                }
+            }
 
             var result = await _subjectRepository.GetFilteredSubjectsAsync(fields);
             return Ok(result);

@@ -25,12 +25,12 @@ public partial class RsMfDemoContext : DbContext
 
     public virtual DbSet<THeSetItem> THeSetItems { get; set; }
 
+    public virtual DbSet<THeSetItemPriceForWrh> THeSetItemPriceForWrhs { get; set; }
+
     public virtual DbSet<THeSetSubj> THeSetSubjs { get; set; }
 
-
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlServer("Server=DEV-T470S\\SQLEXPRESS;Database=RS_MF_DEMO;User Id=sa;Password=DataLab123DataLab;TrustServerCertificate=true;");
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Name=DefaultConnection");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -3200,6 +3200,109 @@ public partial class RsMfDemoContext : DbContext
                 .HasForeignKey(d => d.AcSupplier)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("rtHE_SetItem_tHE_SetSubj_4");
+        });
+
+        modelBuilder.Entity<THeSetItemPriceForWrh>(entity =>
+        {
+            entity.HasKey(e => new { e.AcIdent, e.AcWarehouse }).HasName("kHE_SetItemPriceForWrh_0");
+
+            entity.ToTable("tHE_SetItemPriceForWrh", tb =>
+                {
+                    tb.HasTrigger("gHE_SetItemPriceForWrhInsUD");
+                    tb.HasTrigger("gHE_SetItemPriceForWrhUpdUD");
+                    tb.HasTrigger("gHE_TrackItemPriceForWrhPrimaryKeyChanges");
+                    tb.HasTrigger("gHE_TrackItemPriceForWrhPrimaryKeyDeletes");
+                });
+
+            entity.HasIndex(e => e.AnQid, "IX_tHE_SetItemPriceForWrh_Id")
+                .IsUnique()
+                .HasFillFactor(75);
+
+            entity.HasIndex(e => e.AcWarehouse, "idx_tHE_SetItemPriceForWrh_2").HasFillFactor(75);
+
+            entity.HasIndex(e => e.AcFormula, "idx_tHE_SetItemPriceForWrh_3");
+
+            entity.HasIndex(e => e.AcCurrency, "idx_tHE_SetItemPriceForWrh_4");
+
+            entity.Property(e => e.AcIdent)
+                .HasMaxLength(16)
+                .IsUnicode(false)
+                .HasDefaultValue("")
+                .HasColumnName("acIdent");
+            entity.Property(e => e.AcWarehouse)
+                .HasMaxLength(30)
+                .IsUnicode(false)
+                .HasDefaultValue("")
+                .HasColumnName("acWarehouse");
+            entity.Property(e => e.AcCurrency)
+                .HasMaxLength(3)
+                .IsUnicode(false)
+                .HasDefaultValue("")
+                .HasColumnName("acCurrency");
+            entity.Property(e => e.AcFormula)
+                .HasMaxLength(3)
+                .IsUnicode(false)
+                .HasDefaultValue("")
+                .HasColumnName("acFormula");
+            entity.Property(e => e.AdDiscountBegin)
+                .HasColumnType("datetime")
+                .HasColumnName("adDiscountBegin");
+            entity.Property(e => e.AdDiscountEnd)
+                .HasColumnType("datetime")
+                .HasColumnName("adDiscountEnd");
+            entity.Property(e => e.AdTimeChg)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("adTimeChg");
+            entity.Property(e => e.AdTimeIns)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("adTimeIns");
+            entity.Property(e => e.AnBuyPrice)
+                .HasDefaultValue(0m)
+                .HasColumnType("money")
+                .HasColumnName("anBuyPrice");
+            entity.Property(e => e.AnDiscount)
+                .HasColumnType("decimal(8, 4)")
+                .HasColumnName("anDiscount");
+            entity.Property(e => e.AnDiscountPrice)
+                .HasDefaultValue(-1m)
+                .HasColumnType("decimal(19, 6)")
+                .HasColumnName("anDiscountPrice");
+            entity.Property(e => e.AnDiscountPriceRt)
+                .HasDefaultValue(-1m)
+                .HasColumnType("decimal(19, 6)")
+                .HasColumnName("anDiscountPriceRT");
+            entity.Property(e => e.AnPrStPrice).HasColumnName("anPrStPrice");
+            entity.Property(e => e.AnPrStPriceP).HasColumnName("anPrStPriceP");
+            entity.Property(e => e.AnQid)
+                .ValueGeneratedOnAdd()
+                .HasColumnName("anQId");
+            entity.Property(e => e.AnRtprice).HasColumnName("anRTPrice");
+            entity.Property(e => e.AnRtpriceP).HasColumnName("anRTPriceP");
+            entity.Property(e => e.AnSalePrice)
+                .HasColumnType("money")
+                .HasColumnName("anSalePrice");
+            entity.Property(e => e.AnUserChg)
+                .HasDefaultValue(0)
+                .HasColumnName("anUserChg");
+            entity.Property(e => e.AnUserIns)
+                .HasDefaultValue(0)
+                .HasColumnName("anUserIns");
+            entity.Property(e => e.AnWsprice).HasColumnName("anWSPrice");
+            entity.Property(e => e.AnWsprice2).HasColumnName("anWSPrice2");
+            entity.Property(e => e.AnWsprice2P).HasColumnName("anWSPrice2P");
+            entity.Property(e => e.AnWspriceP).HasColumnName("anWSPriceP");
+
+            entity.HasOne(d => d.AcIdentNavigation).WithMany(p => p.THeSetItemPriceForWrhs)
+                .HasForeignKey(d => d.AcIdent)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("rtHE_SetItemPriceForWrh_tHE_SetItem_1");
+
+            entity.HasOne(d => d.AcWarehouseNavigation).WithMany(p => p.THeSetItemPriceForWrhs)
+                .HasForeignKey(d => d.AcWarehouse)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("rtHE_SetItemPriceForWrh_tHE_SetSubj_4");
         });
 
         modelBuilder.Entity<THeSetSubj>(entity =>

@@ -474,4 +474,6 @@ public partial class THeSetSubj
     public virtual ICollection<THeSetItem> THeSetItemAcForSubjectNavigations { get; set; } = new List<THeSetItem>();
 
     public virtual ICollection<THeSetItem> THeSetItemAcSupplierNavigations { get; set; } = new List<THeSetItem>();
+
+    public virtual ICollection<THeSetItemPriceForWrh> THeSetItemPriceForWrhs { get; set; } = new List<THeSetItemPriceForWrh>();
 }
