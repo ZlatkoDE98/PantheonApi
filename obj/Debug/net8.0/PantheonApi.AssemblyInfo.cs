@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PantheonApi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1c902d9db1056f418d79846e77b91c9ab33cde0a")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+93aa7e2401ac7e1f3557a263093ef1f57fca3cb5")]
 [assembly: System.Reflection.AssemblyProductAttribute("PantheonApi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PantheonApi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
