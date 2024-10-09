@@ -1,110 +1,54 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using PantheonApi.Models;
+using PantheonApi.Repositories.Interfaces;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace PantheonApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/orders")]
     [ApiController]
-    [ApiExplorerSettings(IgnoreApi = true)]
     public class OrderController : ControllerBase
     {
-        private readonly RsMfDemoContext _context;
+        private readonly IOrderRepository _orderRepository;
 
-        public OrderController(RsMfDemoContext context)
+        public OrderController(IOrderRepository orderRepository)
         {
-            _context = context;
+            _orderRepository = orderRepository;
         }
 
-        // GET: api/Orders
+        // GET: api/orders
         [HttpGet]
         public async Task<ActionResult<IEnumerable<THeOrder>>> GetTHeOrders()
         {
-            return await _context.THeOrders
-                .Include(o => o.THeOrderItems)  // Include related entities if necessary
-                .ToListAsync();
+            return Ok(await _orderRepository.GetAllOrdersAsync());
         }
 
-        // GET: api/Orders/5
+        // GET: api/orders/5
         [HttpGet("{id}")]
         public async Task<ActionResult<THeOrder>> GetTHeOrder(string id)
         {
-            var tHeOrder = await _context.THeOrders
-                .Include(o => o.THeOrderItems)  // Include related entities if necessary
-                .FirstOrDefaultAsync(o => o.AcKey == id);
+            var tHeOrder = await _orderRepository.GetOrderByIdAsync(id);
 
             if (tHeOrder == null)
             {
                 return NotFound();
             }
 
-            return tHeOrder;
+            return Ok(tHeOrder);
         }
 
-        // PUT: api/Orders/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutTHeOrder(string id, THeOrder tHeOrder)
+        [HttpPost("CreateOrder")]
+        public async Task<IActionResult> CreateOrder([FromBody] OrderCreationDto orderDto)
         {
-            if (id != tHeOrder.AcKey)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(tHeOrder).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                var acKeyNew = await _orderRepository.CreateOrderAsync(orderDto);
+                return Ok(new { acKey = acKeyNew });
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception ex)
             {
-                if (!THeOrderExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return StatusCode(500, new { error = ex.Message });
             }
-
-            return NoContent();
-        }
-
-        // POST: api/Orders
-        [HttpPost]
-        public async Task<ActionResult<THeOrder>> PostTHeOrder(THeOrder tHeOrder)
-        {
-            _context.THeOrders.Add(tHeOrder);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction(nameof(GetTHeOrder), new { id = tHeOrder.AcKey }, tHeOrder);
-        }
-
-        // DELETE: api/Orders/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteTHeOrder(string id)
-        {
-            var tHeOrder = await _context.THeOrders
-                .Include(o => o.THeOrderItems)  // Include related entities if necessary
-                .FirstOrDefaultAsync(o => o.AcKey == id);
-            if (tHeOrder == null)
-            {
-                return NotFound();
-            }
-
-            _context.THeOrders.Remove(tHeOrder);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool THeOrderExists(string id)
-        {
-            return _context.THeOrders.Any(e => e.AcKey == id);
         }
     }
 }

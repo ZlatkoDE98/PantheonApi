@@ -48,7 +48,7 @@ namespace PantheonApi.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpGet("prices")]
+        [HttpGet("prices/id")]
         public async Task<ActionResult<ItemPriceDto>> GetItemPrices(string id)
         {
             var item = await _itemRepository.GetItemPrices(id);
@@ -61,7 +61,20 @@ namespace PantheonApi.Controllers
             return Ok(item);
         }
 
-        [HttpGet("with-prices")]
+        [HttpGet("prices")]
+        public async Task<ActionResult<IEnumerable<dynamic>>> GetItemPrices()
+        {
+            var item = await _itemRepository.GetItemPrices();
+
+            if (item == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(item);
+        }
+
+        [HttpGet("all-prices")]
         public async Task<ActionResult<IEnumerable<dynamic>>> GetItemsWithPrices()
         {
             var itemsWithPrices = await _itemRepository.GetItemsWithPricesAsync();

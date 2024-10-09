@@ -91,6 +91,22 @@ namespace PantheonApi.Repositories.Implementations
 #pragma warning restore CS8603 // Possible null reference return.
         }
 
+        public async Task<IEnumerable<dynamic>> GetItemPrices()
+        {
+#pragma warning disable CS8603 // Possible null reference return.
+            return await _context.THeSetItems
+        .Select(i => new ItemPriceDto
+        {
+            AcIdent = i.AcIdent,
+            AcName = i.AcName,
+            AnSalePrice = i.AnSalePrice,
+            anBuyPrice = i.AnBuyPrice,
+            anPrice = i.AnPrice
+        })
+        .ToListAsync();
+#pragma warning restore CS8603 // Possible null reference return.
+        }
+
 
         //dodati THeSetItemPriceForWrh tabelu
         public async Task<IEnumerable<dynamic>> GetItemsWithPricesAsync()

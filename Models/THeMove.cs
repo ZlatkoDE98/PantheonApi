@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 
 namespace PantheonApi.Models;
-
 public partial class THeMove
 {
     public string AcKey { get; set; } = null!;
