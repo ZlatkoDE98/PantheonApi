@@ -24,7 +24,7 @@ namespace PantheonApi.Controllers
         }
 
         // GET: api/stock/{id}
-        [HttpGet("{id}")]
+        [HttpGet("stock-ident")]
         public async Task<IActionResult> GetStockById(string warehouse, string ident)
         {
             var stock = await _stockRepository.GetStockByIdAsync(warehouse, ident);
