@@ -56,7 +56,6 @@ namespace PantheonApi.Repositories
 
                     // Execute the main stored procedure for creating the order
                     await _context.Database.ExecuteSqlRawAsync(
-                        //"EXEC pHE_OrderCreAll @acDocType, @acReceiver, @acIssuer, '', @adDate, @param1, @param2, @acKeyNew OUTPUT, 'F', @cStatus OUTPUT, @cError OUTPUT",
                         "EXEC pHE_OrderCreAll @acDocType, @acReceiver, @acIssuer, '', @adDate, @param1, @param2, @acKeyNew OUTPUT, '', @cStatus OUTPUT, @cError OUTPUT",
                         new SqlParameter("@acDocType", orderDto.AcDocType),
                         new SqlParameter("@acReceiver", orderDto.AcReceiver),
@@ -109,10 +108,17 @@ namespace PantheonApi.Repositories
                             new SqlParameter("@anNo", anNo)
                         );
 
-                        // await _context.Database.ExecuteSqlRawAsync(
-                        //     "EXEC pHE_OrderSetSum @acKeyNew",
-                        //     new SqlParameter("@acKeyNew", acKeyNew)
-                        // );
+                         await _context.Database.ExecuteSqlRawAsync(
+                            "UPDATE tHE_MoveItem SET anPrice = @anPrice WHERE acKey = @acKeyNew AND anNo = @anNo",
+                            new SqlParameter("@anPrice", item.AnPrice), // Pass the anPrice parameter
+                            new SqlParameter("@acKeyNew", acKeyNew),
+                            new SqlParameter("@anNo", anNo)
+                        );
+
+                        await _context.Database.ExecuteSqlRawAsync(
+                            "EXEC pHE_OrderSetSum '', '', '', 0, 0, @acKeyNew, 0",
+                            new SqlParameter("@acKeyNew", acKeyNew)
+                        );
                     }
 
                     // Commit transaction
