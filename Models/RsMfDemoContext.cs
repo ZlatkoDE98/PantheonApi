@@ -29,8 +29,11 @@ public partial class RsMfDemoContext : DbContext
 
     public virtual DbSet<THeSetSubj> THeSetSubjs { get; set; }
 
+    public virtual DbSet<THeStock> THeStocks { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlServer("Name=DefaultConnection");
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Server=DEV-T470S\\SQLEXPRESS;Database=RS_MF_DEMO;User Id=sa;Password=DataLab123DataLab;TrustServerCertificate=true;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -4412,6 +4415,83 @@ public partial class RsMfDemoContext : DbContext
                 .HasForeignKey(d => d.AcSuprDept)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("rtHE_SetSubj_tHE_SetSubj_25");
+        });
+
+        modelBuilder.Entity<THeStock>(entity =>
+        {
+            entity.HasKey(e => new { e.AcWarehouse, e.AcIdent }).HasName("kHE_Stock_0");
+
+            entity.ToTable("tHE_Stock", tb =>
+                {
+                    tb.HasTrigger("gHE_StockInsUD");
+                    tb.HasTrigger("gHE_StockUpdUD");
+                });
+
+            entity.HasIndex(e => e.AnQid, "IX_tHE_Stock_Id")
+                .IsUnique()
+                .HasFillFactor(75);
+
+            entity.HasIndex(e => e.AcIdent, "iHE_Stock_Ident").HasFillFactor(75);
+
+            entity.HasIndex(e => e.AcWarehouse, "ix_the_stock_acwarehouse").HasFillFactor(75);
+
+            entity.Property(e => e.AcWarehouse)
+                .HasMaxLength(30)
+                .IsUnicode(false)
+                .HasDefaultValue("")
+                .HasColumnName("acWarehouse");
+            entity.Property(e => e.AcIdent)
+                .HasMaxLength(16)
+                .IsUnicode(false)
+                .HasDefaultValue("")
+                .HasColumnName("acIdent");
+            entity.Property(e => e.AdTimeChg)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("adTimeChg");
+            entity.Property(e => e.AdTimeIns)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("adTimeIns");
+            entity.Property(e => e.AnLastPrice).HasColumnName("anLastPrice");
+            entity.Property(e => e.AnMaxStock)
+                .HasDefaultValue(-1m)
+                .HasColumnType("decimal(19, 6)")
+                .HasColumnName("anMaxStock");
+            entity.Property(e => e.AnMinStock)
+                .HasDefaultValue(-1m)
+                .HasColumnType("decimal(19, 6)")
+                .HasColumnName("anMinStock");
+            entity.Property(e => e.AnOptStock)
+                .HasDefaultValue(-1m)
+                .HasColumnType("decimal(19, 6)")
+                .HasColumnName("anOptStock");
+            entity.Property(e => e.AnQid)
+                .ValueGeneratedOnAdd()
+                .HasColumnName("anQId");
+            entity.Property(e => e.AnReserved)
+                .HasColumnType("decimal(19, 6)")
+                .HasColumnName("anReserved");
+            entity.Property(e => e.AnStock)
+                .HasColumnType("decimal(19, 6)")
+                .HasColumnName("anStock");
+            entity.Property(e => e.AnUserChg)
+                .HasDefaultValue(0)
+                .HasColumnName("anUserChg");
+            entity.Property(e => e.AnUserIns)
+                .HasDefaultValue(0)
+                .HasColumnName("anUserIns");
+            entity.Property(e => e.AnValue).HasColumnName("anValue");
+
+            entity.HasOne(d => d.AcIdentNavigation).WithMany(p => p.THeStocks)
+                .HasForeignKey(d => d.AcIdent)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("rtHE_Stock_tHE_SetItem_2");
+
+            entity.HasOne(d => d.AcWarehouseNavigation).WithMany(p => p.THeStocks)
+                .HasForeignKey(d => d.AcWarehouse)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("rtHE_Stock_tHE_SetSubj_1");
         });
 
         OnModelCreatingPartial(modelBuilder);

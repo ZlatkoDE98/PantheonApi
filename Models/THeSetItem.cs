@@ -418,4 +418,6 @@ public partial class THeSetItem
     public virtual ICollection<THeOrderItem> THeOrderItems { get; set; } = new List<THeOrderItem>();
 
     public virtual ICollection<THeSetItemPriceForWrh> THeSetItemPriceForWrhs { get; set; } = new List<THeSetItemPriceForWrh>();
+
+    public virtual ICollection<THeStock> THeStocks { get; set; } = new List<THeStock>();
 }
