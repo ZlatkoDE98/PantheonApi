@@ -4,7 +4,7 @@ using PantheonApi.Repositories.Interfaces;
 
 namespace PantheonApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/stocks")]
     [ApiController]
     public class StockController : ControllerBase
     {
@@ -55,7 +55,5 @@ namespace PantheonApi.Controllers
             }
             return Ok(res);
         }
-
-    
     }
 }

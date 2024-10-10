@@ -18,7 +18,7 @@ namespace PantheonApi.Controllers
 
         // GET: api/orders
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<THeOrder>>> GetTHeOrders()
+        public async Task<ActionResult<IEnumerable<OrderDto>>> GetTHeOrders()
         {
             var orders = await _orderRepository.GetAllOrdersAsync();
             return Ok(orders);
@@ -26,7 +26,7 @@ namespace PantheonApi.Controllers
 
         // GET: api/orders/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<THeOrder>> GetTHeOrder(string id)
+        public async Task<ActionResult<OrderDto>> GetTHeOrder(string id)
         {
             var tHeOrder = await _orderRepository.GetOrderByIdAsync(id);
 

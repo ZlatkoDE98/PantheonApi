@@ -1,6 +1,7 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using PantheonApi.DTOs.Subject;
 using PantheonApi.Models;
 using PantheonApi.Repositories.Interfaces;
 using System.Linq.Dynamic.Core;
@@ -23,7 +24,7 @@ namespace PantheonApi.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<THeSetSubj>>> GetSubjects()
+        public async Task<ActionResult<IEnumerable<SubjectDto>>> GetSubjects()
         {
             var subjects = await _subjectRepository.GetAllSubjectsAsync();
 
@@ -31,7 +32,7 @@ namespace PantheonApi.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<THeSetSubj>> GetSubject(string id)
+        public async Task<ActionResult<SubjectDto>> GetSubject(string id)
         {
             var subject = await _subjectRepository.GetSubjectByIdAsync(id);
 
