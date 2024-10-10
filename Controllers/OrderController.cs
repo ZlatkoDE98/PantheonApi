@@ -20,7 +20,8 @@ namespace PantheonApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<THeOrder>>> GetTHeOrders()
         {
-            return Ok(await _orderRepository.GetAllOrdersAsync());
+            var orders = await _orderRepository.GetAllOrdersAsync();
+            return Ok(orders);
         }
 
         // GET: api/orders/5

@@ -38,7 +38,7 @@ namespace PantheonApi.Repositories.Implementations
                 .ToListAsync();
         }
 
-        public async Task<StockDto> GetStockByIdAsync(string warehouseId, string ident)
+        public async Task<StockDto> GetStockIdentById(string warehouseId, string ident)
         {
 #pragma warning disable CS8603 // Possible null reference return.
             return await _context.THeStocks
@@ -62,6 +62,54 @@ namespace PantheonApi.Repositories.Implementations
                 })
                 .FirstOrDefaultAsync();
 #pragma warning restore CS8603 // Possible null reference return.
+        }
+
+        public async Task<List<StockDto>> GetByWarehouseIdAsync(string warehouseId)
+        {
+            return await _context.THeStocks
+                .Where(s => s.AcWarehouse == warehouseId)
+                .Select(s => new StockDto
+                {
+                    AcWarehouse = s.AcWarehouse,
+                    AcIdent = s.AcIdent,
+                    AnStock = s.AnStock,
+                    AnValue = s.AnValue,
+                    AnLastPrice = s.AnLastPrice,
+                    AdTimeChg = s.AdTimeChg,
+                    AnReserved = s.AnReserved,
+                    AdTimeIns = s.AdTimeIns,
+                    AnUserIns = s.AnUserIns,
+                    AnUserChg = s.AnUserChg,
+                    AnMinStock = s.AnMinStock,
+                    AnOptStock = s.AnOptStock,
+                    AnMaxStock = s.AnMaxStock,
+                    AnQid = s.AnQid
+                })
+                .ToListAsync();
+        }
+
+        public async Task<List<StockDto>> GetByIdentIdAsync(string ident)
+        {
+            return await _context.THeStocks
+                .Where(s => s.AcIdent == ident)
+                .Select(s => new StockDto
+                {
+                    AcWarehouse = s.AcWarehouse,
+                    AcIdent = s.AcIdent,
+                    AnStock = s.AnStock,
+                    AnValue = s.AnValue,
+                    AnLastPrice = s.AnLastPrice,
+                    AdTimeChg = s.AdTimeChg,
+                    AnReserved = s.AnReserved,
+                    AdTimeIns = s.AdTimeIns,
+                    AnUserIns = s.AnUserIns,
+                    AnUserChg = s.AnUserChg,
+                    AnMinStock = s.AnMinStock,
+                    AnOptStock = s.AnOptStock,
+                    AnMaxStock = s.AnMaxStock,
+                    AnQid = s.AnQid
+                })
+                .ToListAsync();
         }
 
         public async Task<IEnumerable<dynamic>> GetFilteredStocksAsync(string fields)

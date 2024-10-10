@@ -25,14 +25,35 @@ namespace PantheonApi.Controllers
 
         // GET: api/stock/{id}
         [HttpGet("stock-ident")]
-        public async Task<IActionResult> GetStockById(string warehouse, string ident)
+        public async Task<IActionResult> GetStockIdentById(string warehouse, string ident)
         {
-            var stock = await _stockRepository.GetStockByIdAsync(warehouse, ident);
+            var stock = await _stockRepository.GetStockIdentById(warehouse, ident);
             if (stock == null)
             {
                 return NotFound();
             }
             return Ok(stock);
+        }
+        [HttpGet("stock")]
+        public async Task<IActionResult> GetByWarehouse(string warehouse)
+        {
+            var stock = await _stockRepository.GetByWarehouseIdAsync(warehouse);
+            if (stock == null)
+            {
+                return NotFound();
+            }
+            return Ok(stock);
+        }
+
+        [HttpGet("ident")]
+        public async Task<IActionResult> GetByIdent(string ident)
+        {
+            var res = await _stockRepository.GetByIdentIdAsync(ident);
+            if (res == null)
+            {
+                return NotFound();
+            }
+            return Ok(res);
         }
 
     
